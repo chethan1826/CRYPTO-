@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2d">
+  <title>Vault / DES Document Lab</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Vault home"><span class="brand-mark">V</span><span>VAULT<span class="brand-dot">.</span></span></a>
+    <div class="top-meta"><span class="live-dot"></span> LOCAL ENCRYPTION LAB <span class="meta-divider">/</span> DES-64</div>
+    <a class="about-link" href="#about">About DES <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> CRYPTOGRAPHY · MODULE 01</div>
+      <h1>Your documents,<br><span>under lock &amp; key.</span></h1>
+      <p class="hero-copy">A hands-on demonstration of the Data Encryption Standard. Encrypt a file, save its ciphertext, and decrypt it with the same key.</p>
+      <div class="security-note"><span class="note-icon">!</span><span><strong>Educational use only.</strong> DES has a 56-bit effective key and is not secure for modern protection.</span></div>
+    </section>
+
+    <section class="workspace" aria-label="Document encryption workspace">
+      <div class="flow-label"><span>01</span> ENCRYPT A DOCUMENT</div>
+      <div class="card-grid">
+        <article class="panel file-panel">
+          <div class="panel-head"><div class="step-number">01</div><div><p class="panel-kicker">SOURCE DOCUMENT</p><h2>Choose a file</h2></div><span class="panel-status">READY</span></div>
+          <label class="dropzone" id="dropzone" for="file-input">
+            <input id="file-input" type="file" hidden>
+            <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4"/></svg></span>
+            <span class="drop-title">Drop your file here</span><span class="drop-subtitle">or <span class="browse">browse files</span></span>
+            <span class="file-limit">ANY FILE TYPE <i>·</i> UP TO 25 MB</span>
+          </label>
+          <div class="selected-file hidden" id="selected-file"><span class="file-badge">FILE</span><span class="file-info"><strong id="file-name"></strong><small id="file-size"></small></span><button class="remove-file" id="remove-file" aria-label="Remove selected file">×</button></div>
+          <div class="panel-foot"><span class="foot-lock">▣</span> Files are processed locally and never saved by the server.</div>
+        </article>
+
+        <article class="panel key-panel">
+          <div class="panel-head"><div class="step-number">02</div><div><p class="panel-kicker">ENCRYPTION KEY</p><h2>Set your key</h2></div><span class="panel-status status-secure">PRIVATE</span></div>
+          <label class="field-label" for="key-input">DES KEY <span>8 CHARACTERS REQUIRED</span></label>
+          <div class="key-input-wrap"><input id="key-input" type="password" maxlength="8" minlength="8" placeholder="Enter 8 characters" autocomplete="new-password"><button id="toggle-key" class="toggle-key" type="button" aria-label="Show key">SHOW</button></div>
+          <div class="key-meter"><span id="key-meter-bar"></span></div>
+          <p class="key-hint" id="key-hint">Your key stays in this browser session. Keep it safe.</p>
+          <div class="algorithm-card"><div class="algo-symbol">⌘</div><div><strong>DES <span>· CBC MODE</span></strong><small>64-bit blocks <i>·</i> 56-bit effective key</small></div><span class="algo-tag">CLASSIC</span></div>
+          <button class="primary-button" id="encrypt-button" disabled><span>Encrypt document</span><span class="button-arrow">→</span></button>
+        </article>
+      </div>
+
+      <div class="flow-connector"><span></span><div class="connector-node">↓</div><span></span></div>
+      <section class="result-panel hidden" id="encrypt-result" aria-live="polite">
+        <div class="result-icon">✓</div><div class="result-copy"><p class="panel-kicker">ENCRYPTION COMPLETE</p><h2>Your file is locked.</h2><p id="encrypt-result-detail"></p></div><button class="secondary-button" id="download-encrypted">Download .des <span>↓</span></button>
+      </section>
+      <div class="status-message" id="status-message" role="status"></div>
+
+      <div class="decrypt-divider"><span></span><span>ALREADY HAVE A CIPHERTEXT FILE?</span><span></span></div>
+      <section class="decrypt-card">
+        <div class="decrypt-intro"><div class="decrypt-icon">↻</div><div><p class="panel-kicker">REVERSE THE PROCESS</p><h2>Decrypt a document</h2><p>Choose a <code>.des</code> file and enter the original key to recover your document.</p></div></div>
+        <label class="decrypt-upload" for="decrypt-input"><input id="decrypt-input" type="file" hidden><span>＋</span> <strong id="decrypt-file-label">Choose a .des file</strong><small>MAX 25 MB</small></label>
+        <div class="decrypt-key-group"><label class="field-label" for="decrypt-key">DES KEY</label><input id="decrypt-key" type="password" maxlength="8" placeholder="Same 8-character key" autocomplete="new-password"></div>
+        <button class="secondary-button decrypt-button" id="decrypt-button" disabled>Decrypt file <span>→</span></button>
+      </section>
+      <section class="decrypt-result hidden" id="decrypt-result" aria-live="polite"><span class="result-icon">✓</span><span><strong>Document recovered</strong><small id="decrypt-result-detail"></small></span><button id="download-decrypted" class="secondary-button">Download file <span>↓</span></button></section>
+    </section>
+
+    <section class="about-section" id="about"><div class="about-heading"><div class="eyebrow"><span class="eyebrow-line"></span> THE ALGORITHM</div><h2>Built for a different era.</h2><p>DES is a landmark in cryptography history. Understanding it helps explain how modern encryption evolved.</p></div><div class="facts-grid"><div class="fact"><span class="fact-number">01</span><strong>64-bit block cipher</strong><p>DES transforms data in fixed 64-bit blocks through 16 rounds of substitution and permutation.</p></div><div class="fact"><span class="fact-number">02</span><strong>56-bit effective key</strong><p>Eight bytes are supplied; eight parity bits leave 56 bits that control the encryption.</p></div><div class="fact fact-warning"><span class="fact-number">03</span><strong>Not secure today</strong><p>A 56-bit key can be brute-forced with modern hardware. This demo is for learning only.</p></div></div></section>
+  </main>
+  <footer><span class="brand"><span class="brand-mark">V</span> VAULT<span class="brand-dot">.</span></span><span>ACADEMIC DEMONSTRATION <i>·</i> DES IS RETIRED FOR MODERN SECURITY</span><a href="#about">LEARN ABOUT DES ↑</a></footer>
+  <script src="/app.js" defer></script>
+</body>
+</html>
