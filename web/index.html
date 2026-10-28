@@ -6,15 +6,45 @@
   <meta name="theme-color" content="#101b2d">
   <title>Vault / DES Document Lab</title>
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/auth.css">
 </head>
 <body>
-  <header class="topbar">
+  <section class="auth-screen" id="auth-screen" aria-labelledby="auth-title">
+    <a class="brand auth-brand" href="/" aria-label="Vault home"><span class="brand-mark">V</span><span>VAULT<span class="brand-dot">.</span></span></a>
+    <div class="auth-card">
+      <div class="eyebrow"><span class="eyebrow-line"></span> LOCAL ACCOUNT <span class="eyebrow-line"></span></div>
+      <h1 id="auth-title">Welcome back<span>.</span></h1>
+      <p class="auth-intro" id="auth-intro">Sign in to open your document encryption workspace.</p>
+      <form id="login-form" class="auth-form">
+        <label class="field-label" for="login-email">EMAIL ADDRESS</label>
+        <input id="login-email" name="email" type="email" maxlength="254" autocomplete="username" placeholder="you@example.com" required>
+        <label class="field-label" for="login-password">PASSWORD</label>
+        <input id="login-password" name="password" type="password" minlength="8" maxlength="72" autocomplete="current-password" placeholder="Enter your password" required>
+        <button class="primary-button auth-submit" type="submit"><span>Sign in</span><span class="button-arrow">→</span></button>
+      </form>
+      <form id="register-form" class="auth-form hidden">
+        <label class="field-label" for="register-email">EMAIL ADDRESS</label>
+        <input id="register-email" name="email" type="email" maxlength="254" autocomplete="username" placeholder="you@example.com" required>
+        <label class="field-label" for="register-password">PASSWORD <span>8-72 CHARACTERS</span></label>
+        <input id="register-password" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Create a password" required>
+        <label class="field-label" for="register-confirm">CONFIRM PASSWORD</label>
+        <input id="register-confirm" name="confirm" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Enter it again" required>
+        <button class="primary-button auth-submit" type="submit"><span>Create account</span><span class="button-arrow">→</span></button>
+      </form>
+      <p class="auth-error" id="auth-error" role="alert"></p>
+      <p class="auth-switch" id="auth-switch">New here? <button type="button" id="show-register">Create an account</button></p>
+      <div class="auth-local-note"><span class="live-dot"></span> Local demo account. Passwords are bcrypt-hashed on the Java server.</div>
+    </div>
+    <p class="auth-warning">DES is a legacy coursework demonstration and must not be used to protect real documents.</p>
+  </section>
+  <header class="topbar" id="app-header" hidden>
     <a class="brand" href="/" aria-label="Vault home"><span class="brand-mark">V</span><span>VAULT<span class="brand-dot">.</span></span></a>
     <div class="top-meta"><span class="live-dot"></span> LOCAL ENCRYPTION LAB <span class="meta-divider">/</span> DES-64</div>
     <a class="about-link" href="#about">About DES <span aria-hidden="true">↗</span></a>
+    <div class="account-bar"><span id="account-email"></span><button id="logout-button" type="button">Sign out</button></div>
   </header>
 
-  <main>
+  <main id="app-main" hidden>
     <section class="hero">
       <div class="eyebrow"><span class="eyebrow-line"></span> CRYPTOGRAPHY · MODULE 01</div>
       <h1>Your documents,<br><span>under lock &amp; key.</span></h1>
@@ -39,8 +69,15 @@
 
         <article class="panel key-panel">
           <div class="panel-head"><div class="step-number">02</div><div><p class="panel-kicker">ENCRYPTION KEY</p><h2>Set your key</h2></div><span class="panel-status status-secure">PRIVATE</span></div>
+          <label class="field-label" for="key-account-password">CONFIRM ACCOUNT PASSWORD</label>
+          <input class="key-password-input" id="key-account-password" type="password" maxlength="72" placeholder="Re-enter your sign-in password" autocomplete="current-password">
+          <label class="field-label" for="key-password">ENCRYPTION PASSWORD <span>8+ CHARACTERS</span></label>
+          <div class="key-generation-wrap"><input id="key-password" type="password" minlength="8" maxlength="1024" placeholder="Enter a password to derive your key" autocomplete="new-password"><button class="secondary-button generate-key-button" id="generate-key" type="button">Generate key</button></div>
+          <p class="key-derivation-note">PBKDF2-HMAC-SHA-256 · 310,000 iterations · account email as salt</p>
+          <p class="key-hint">Use different account and encryption passwords. Copy the generated DES key and keep it safe for manual entry during decryption.</p>
           <label class="field-label" for="key-input">DES KEY <span>8 CHARACTERS REQUIRED</span></label>
           <div class="key-input-wrap"><input id="key-input" type="password" maxlength="8" minlength="8" placeholder="Enter 8 characters" autocomplete="new-password"><button id="toggle-key" class="toggle-key" type="button" aria-label="Show key">SHOW</button></div>
+          <button class="secondary-button copy-key-button" id="copy-key-button" type="button" disabled>Copy generated key</button>
           <div class="key-meter"><span id="key-meter-bar"></span></div>
           <p class="key-hint" id="key-hint">Your key stays in this browser session. Keep it safe.</p>
           <div class="algorithm-card"><div class="algo-symbol">⌘</div><div><strong>DES <span>· CBC MODE</span></strong><small>64-bit blocks <i>·</i> 56-bit effective key</small></div><span class="algo-tag">CLASSIC</span></div>
@@ -56,9 +93,16 @@
 
       <div class="decrypt-divider"><span></span><span>ALREADY HAVE A CIPHERTEXT FILE?</span><span></span></div>
       <section class="decrypt-card">
-        <div class="decrypt-intro"><div class="decrypt-icon">↻</div><div><p class="panel-kicker">REVERSE THE PROCESS</p><h2>Decrypt a document</h2><p>Choose a <code>.des</code> file and enter the original key to recover your document.</p></div></div>
+        <div class="decrypt-intro"><div class="decrypt-icon">↻</div><div><p class="panel-kicker">REVERSE THE PROCESS</p><h2>Decrypt a document</h2><p>Enter the same account password, encryption password, and copied DES key used during encryption.</p></div></div>
         <label class="decrypt-upload" for="decrypt-input"><input id="decrypt-input" type="file" hidden><span>＋</span> <strong id="decrypt-file-label">Choose a .des file</strong><small>MAX 25 MB</small></label>
-        <div class="decrypt-key-group"><label class="field-label" for="decrypt-key">DES KEY</label><input id="decrypt-key" type="password" maxlength="8" placeholder="Same 8-character key" autocomplete="new-password"></div>
+        <div class="decrypt-key-group">
+          <label class="field-label" for="decrypt-account-password">ACCOUNT PASSWORD</label>
+          <input class="key-password-input" id="decrypt-account-password" type="password" maxlength="72" placeholder="Re-enter your sign-in password" autocomplete="current-password">
+          <label class="field-label" for="decrypt-password">ENCRYPTION PASSWORD</label>
+          <input class="key-password-input" id="decrypt-password" type="password" minlength="8" maxlength="1024" placeholder="Same encryption password" autocomplete="new-password">
+          <label class="field-label" for="decrypt-key">DES KEY</label>
+          <div class="key-input-wrap decrypt-key-input-wrap"><input id="decrypt-key" type="password" maxlength="8" placeholder="Paste or enter the 8-character key" autocomplete="new-password"><button id="toggle-decrypt-key" class="toggle-key" type="button" aria-label="Show decryption key">SHOW</button></div>
+        </div>
         <button class="secondary-button decrypt-button" id="decrypt-button" disabled>Decrypt file <span>→</span></button>
       </section>
       <section class="decrypt-result hidden" id="decrypt-result" aria-live="polite"><span class="result-icon">✓</span><span><strong>Document recovered</strong><small id="decrypt-result-detail"></small></span><button id="download-decrypted" class="secondary-button">Download file <span>↓</span></button></section>
@@ -66,7 +110,7 @@
 
     <section class="about-section" id="about"><div class="about-heading"><div class="eyebrow"><span class="eyebrow-line"></span> THE ALGORITHM</div><h2>Built for a different era.</h2><p>DES is a landmark in cryptography history. Understanding it helps explain how modern encryption evolved.</p></div><div class="facts-grid"><div class="fact"><span class="fact-number">01</span><strong>64-bit block cipher</strong><p>DES transforms data in fixed 64-bit blocks through 16 rounds of substitution and permutation.</p></div><div class="fact"><span class="fact-number">02</span><strong>56-bit effective key</strong><p>Eight bytes are supplied; eight parity bits leave 56 bits that control the encryption.</p></div><div class="fact fact-warning"><span class="fact-number">03</span><strong>Not secure today</strong><p>A 56-bit key can be brute-forced with modern hardware. This demo is for learning only.</p></div></div></section>
   </main>
-  <footer><span class="brand"><span class="brand-mark">V</span> VAULT<span class="brand-dot">.</span></span><span>ACADEMIC DEMONSTRATION <i>·</i> DES IS RETIRED FOR MODERN SECURITY</span><a href="#about">LEARN ABOUT DES ↑</a></footer>
+  <footer id="app-footer" hidden><span class="brand"><span class="brand-mark">V</span> VAULT<span class="brand-dot">.</span></span><span>ACADEMIC DEMONSTRATION <i>·</i> DES IS RETIRED FOR MODERN SECURITY</span><a href="#about">LEARN ABOUT DES ↑</a></footer>
   <script src="/app.js" defer></script>
 </body>
 </html>
